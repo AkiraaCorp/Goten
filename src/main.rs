@@ -197,7 +197,7 @@ async fn process_block(
 }
 
 fn bet_claimed_event_key() -> Felt {
-    get_selector_from_name("BetClaimed").expect("Failed to compute event selector")
+    get_selector_from_name("Claim").expect("Failed to compute event selector")
 }
 
 fn parse_bet_claimed_event(data: &[Felt]) -> Option<BetClaimedEvent> {
