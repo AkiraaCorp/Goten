@@ -53,36 +53,35 @@ async fn setup_database() -> Pool<Postgres> {
         .await
         .expect("Failed to create database pool");
 
-    setup_block_state_gotenk(&pool).await;
+    setup_block_state_goten(&pool).await;
 
     pool
 }
 
-async fn setup_block_state_gotenk(pool: &Pool<Postgres>) {
+async fn setup_block_state_goten(pool: &Pool<Postgres>) {
     sqlx::query(
-        "CREATE TABLE IF NOT EXISTS block_state_gotenk (
+        "CREATE TABLE IF NOT EXISTS block_state_goten (
             id INTEGER PRIMARY KEY,
             last_processed_block BIGINT NOT NULL
         )",
     )
     .execute(pool)
     .await
-    .expect("Failed to create block_state_gotenk table");
+    .expect("Failed to create block_state_goten table");
 
-    // Initialize the table with id = 1 if not already present
     sqlx::query(
-        "INSERT INTO block_state_gotenk (id, last_processed_block)
+        "INSERT INTO block_state_goten (id, last_processed_block)
          VALUES (1, 0)
          ON CONFLICT (id) DO NOTHING",
     )
     .execute(pool)
     .await
-    .expect("Failed to initialize block_state_gotenk");
+    .expect("Failed to initialize block_state_goten");
 }
 
 async fn fetch_contract_addresses(pool: &Pool<Postgres>) -> Vec<Felt> {
     let contract_addresses: Vec<Felt> =
-        sqlx::query("SELECT address FROM events WHERE is_active = true")
+        sqlx::query("SELECT address FROM events WHERE is_active = false")
             .map(|row: PgRow| {
                 let address: String = row.get("address");
                 Felt::from_hex(&address).expect("Invalid Felt")
@@ -127,7 +126,7 @@ async fn process_new_events(
 
 async fn get_last_processed_block(pool: &Pool<Postgres>) -> u64 {
     let row: (i64,) =
-        sqlx::query_as("SELECT last_processed_block FROM block_state_gotenk WHERE id = 1")
+        sqlx::query_as("SELECT last_processed_block FROM block_state_goten WHERE id = 1")
             .fetch_one(pool)
             .await
             .expect("Failed to fetch last_processed_block");
@@ -137,7 +136,7 @@ async fn get_last_processed_block(pool: &Pool<Postgres>) -> u64 {
 
 async fn update_last_processed_block(pool: &Pool<Postgres>, block_number: u64) {
     if let Err(e) =
-        sqlx::query("UPDATE block_state_gotenk SET last_processed_block = $1 WHERE id = 1")
+        sqlx::query("UPDATE block_state_goten SET last_processed_block = $1 WHERE id = 1")
             .bind(block_number as i64)
             .execute(pool)
             .await
