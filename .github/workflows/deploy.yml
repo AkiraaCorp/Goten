@@ -22,12 +22,12 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -p $VPS_SSH_PORT $VPS_USER@$VPS_HOST "
           
-            if [ ! -d '/home/ubuntu/Kaio' ]; then
+            if [ ! -d '/home/ubuntu/Goten' ]; then
               GIT_SSH_COMMAND='ssh -i /root/.ssh/goten/goten-deploy' git clone git@github.com:AkiraaCorp/Goten.git /home/ubuntu/Goten
             else
-              cd /home/ubuntu/Kaio && GIT_SSH_COMMAND='ssh -i /root/.ssh/goten/goten-deploy' git pull origin main
+              cd /home/ubuntu/Goten && GIT_SSH_COMMAND='ssh -i /root/.ssh/goten/goten-deploy' git pull origin main
             fi
-            cd /home/ubuntu/Kaio
+            cd /home/ubuntu/Goten
 
             cat > .env <<EOL
           DATABASE_URL=postgresql://postgres:${{ secrets.DB_PASSWORD }}@localhost:5432/sightbet
