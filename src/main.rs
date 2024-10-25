@@ -117,8 +117,9 @@ async fn process_new_events(
             for &contract_address in contract_addresses {
                 process_block(provider, block_number, contract_address, pool).await;
             }
-            update_last_processed_block(pool, block_number).await;
         }
+        update_last_processed_block(pool, latest_block).await;
+        
     } else {
         info!("📡 No new blocks to process.");
     }
