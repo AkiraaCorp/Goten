@@ -36,9 +36,9 @@ async fn main() {
 
     let pool = setup_database().await;
 
-    let contract_addresses = fetch_contract_addresses(&pool).await;
-
+    
     loop {
+        let contract_addresses = fetch_contract_addresses(&pool).await;
         process_new_events(&provider, &contract_addresses, &pool).await;
         tokio::time::sleep(Duration::from_secs(10)).await;
     }
