@@ -31,8 +31,7 @@ jobs:
 
             cat > .env <<EOL
           DATABASE_URL=postgresql://postgres:${{ secrets.DB_PASSWORD }}@localhost:5432/sightbet
-          RPC_ENDPOINT=https://starknet-sepolia.blastapi.io/a1c45f16-3f71-48f5-aaeb-925f5954e8a4
-          EOL
+          RPC_ENDPOINT=${{ secrets.ALCHEMY_API }}
             rustup default stable
             pm2 describe goten-cron > /dev/null && pm2 stop goten-cron || echo 'Process not running'
             cargo build --release
